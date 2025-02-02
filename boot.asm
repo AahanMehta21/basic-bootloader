@@ -14,16 +14,16 @@ bits 16 ; tells assembler to work in 16 bit real-mode
 call clearscreen
 
 push 0x0000 ; argument for movecursor
-call movecursor
+call setcursor
 add sp, 2 ; clean up stack
 
-push msg ; argument for print
+push bootmessage ; argument for print
 call print
 add sp, 2 ; clean up stack
 
 cli   ; disables further interrupts
-hit   ; halt processor from executing program further
-
+hlt   ; halt processor from executing program further
+  
 
 ; clearing the screen and setting up color and stuff
 ; calls video interrupt. see https://www.ctyme.com/intr/rb-0097.htm
@@ -61,8 +61,8 @@ setcursor:
   pop bp
   ret
 
-; string message to print upon booting
-bootmessage: "Never gonna give you up, never gonna let you down.", 0
+; string message to print upon booting db means save it byte by byte
+bootmessage: db  "Never gonna give you up, never gonna let you down.",0
 
 print:
   push bp
@@ -88,5 +88,5 @@ print:
   pop bp
   ret
 
-times 510-(\$-$$) db 0  ; fills up remaining spaces with 0 to fit within 512 bytes assigned to bootloader
+times 510-($-$$) db 0  ; fills up remaining spaces with 0 to fit within 512 bytes assigned to bootloader
 dw 0xAA55 ; bootloader signature 
