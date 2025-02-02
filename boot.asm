@@ -1,3 +1,5 @@
+bits 16 ; tells assembler to work in 16 bit real-mode
+
 ; code resides at 0x7C00 so segment is 0x7C0
   mov ax, 0x7C0
   mov ds, ax
@@ -8,6 +10,19 @@
 
 ; setting stack pointer to 0x2000 so stack top is at 0x9E00 and stack size is 8Kb
   mov sp, 0x2000
+
+call clearscreen
+
+push 0x0000 ; argument for movecursor
+call movecursor
+add sp, 2 ; clean up stack
+
+push msg ; argument for print
+call print
+add sp, 2 ; clean up stack
+
+cli   ; disables further interrupts
+hit   ; halt processor from executing program further
 
 
 ; clearing the screen and setting up color and stuff
@@ -72,3 +87,6 @@ print:
   mov sp, bp
   pop bp
   ret
+
+times 510-(\$-$$) db 0  ; fills up remaining spaces with 0 to fit within 512 bytes assigned to bootloader
+dw 0xAA55 ; bootloader signature 
