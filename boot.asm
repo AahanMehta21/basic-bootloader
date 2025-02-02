@@ -14,7 +14,7 @@ bits 16 ; tells assembler to work in 16 bit real-mode
 call clearscreen
 
 push 0x0000 ; argument for movecursor
-call setcursor
+call movecursor
 add sp, 2 ; clean up stack
 
 push bootmessage ; argument for print
@@ -45,7 +45,7 @@ clearscreen:
   pop bp
   ret
 
-setcursor:
+movecursor:
   push bp
   mov bp, sp
   pusha
