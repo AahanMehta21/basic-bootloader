@@ -55,9 +55,19 @@ print:
   pusha
 
 ; https://www.ctyme.com/intr/rb-0106.htm <- info on interrupt
-  mov si, [bp+4]    ; pointer to data
-  mov bh, 0x00      ; 
+  mov si, [bp+4]  ; pointer to data
+  mov bh, 0x00    ; page number set to 0 (current page)
+  mov bl, 0x00    ; set foreground color to black
+  mov ah, 0x0E    ; lets interrupt know to print message in console
 
+.char:
+    mov al, [si]  ; dereference pointer to string to get current character
+    add si, 1     ; move to next character
+    or al, 0      ; check if current character is the null terminator
+    je .return    ; end loop when string is looped through
+    int 0x10      ; call interrupt to print current character stored in al
+    jmp .char     ; loop
+.return:
   popa
   mov sp, bp
   pop bp
